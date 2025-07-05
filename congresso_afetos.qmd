@@ -1,0 +1,178 @@
+---
+title: "Congresso_afetos"
+editor_options:
+  chunk_output_type: console
+---
+# Rodando os pacotes necessários
+```{r}
+
+#| echo: false
+#| message: false
+#| warning: false 
+library(tidyverse)
+library(readxl)
+library(lavaan)
+
+```
+
+# Pegando o banco
+```{r}
+
+df <- read_csv("data/empatia_congresso.csv")
+
+codebook <- read_csv("data/code_book_escala_afetos_positivos_negativos.csv")
+
+```
+
+# Selecionando somente as variaveis de interesse
+```{r}
+
+df_all_itens <- df |> 
+  select(a1:a20) |> 
+  filter()
+
+```
+
+# Guia para separar por fatores
+```{r}
+
+codebook |> 
+  filter(Fator != "Afeto negativo") |> 
+  print()
+
+
+codebook |> 
+  filter(Fator != "Afeto positivo") |> 
+  print()
+
+```
+
+# f1 = Afetos Negativos, f2 = Afetos Positivos
+```{r}
+
+modelo1 <- "f1 =~  a1 + a4 + a5 + a7 + a10 + a11 + 
+      a12 + a16 + a19 + a20 
+
+      f2 =~  a2 + a3 + a6 + a8 + a9 + a13 + a14 +
+      a15 + a17 + a18 "
+
+```
+
+# CFA
+```{r}
+
+modelo_cfa_1 <- cfa(model = modelo1,
+                  data = df_all_itens,
+                  ordered = names("a"),
+                  estimator = "wlsmv")
+
+```
+
+# sumário do modelo
+```{r}
+ 
+m1 <- summary(modelo_cfa_1,
+        fit.measures = T,
+        rsquare = T,
+        standardized= T)
+
+```
+
+# retirada dos itens 7, 11 e 14
+```{r}
+
+modelo2 <- "f1 =~  a1 + a4 + a5 + a10 + 
+      a12 + a16 + a19 + a20 
+
+      f2 =~  a2 + a3 + a6 + a8 + a9 + a13 + 
+      a15 + a17 + a18 "
+
+```
+
+# CFA
+```{r}
+
+modelo_cfa_2 <- cfa(model = modelo2,
+                  data = df_all_itens,
+                  ordered = T,
+                  estimator = "wlsmv")
+
+```
+
+# sumário do modelo
+```{r}
+ 
+m2 <- summary(modelo_cfa_2,
+        fit.measures = T,
+        rsquare = T,
+        standardized= T)
+
+```
+
+# retirada do item 10
+```{r}
+
+modelo3 <- "f1 =~  a1 + a4 + a5 + 
+      a12 + a16 + a19 + a20 
+
+      f2 =~  a2 + a3 + a6 + a8 + a9 + a13 + 
+      a15 + a17 + a18 "
+
+```
+
+# CFA
+```{r}
+
+modelo_cfa_3 <- cfa(model = modelo3,
+                  data = df_all_itens,
+                  ordered = T,
+                  estimator = "wlsmv")
+
+```
+
+# sumário do modelo
+```{r}
+ 
+m3 <- summary(modelo_cfa_3,
+        fit.measures = T,
+        rsquare = T,
+        standardized= T)
+
+```
+
+# comparar modelos
+```{r}
+# Extrair indicadores de ajuste robustos para cada modelo
+fit_m1 <- fitMeasures(modelo_cfa_1, fit.measures = c("cfi.robust", "tli.robust", "rmsea.robust", "rmsea.ci.lower.robust", "rmsea.ci.upper.robust", "srmr"))
+fit_m2 <- fitMeasures(modelo_cfa_2, fit.measures = c("cfi.robust", "tli.robust", "rmsea.robust", "rmsea.ci.lower.robust", "rmsea.ci.upper.robust", "srmr"))
+fit_m3 <- fitMeasures(modelo_cfa_3, fit.measures = c("cfi.robust", "tli.robust", "rmsea.robust", "rmsea.ci.lower.robust", "rmsea.ci.upper.robust", "srmr"))
+
+# Organizar os resultados em uma tabela
+resultados <- data.frame(
+  Modelo = c("Modelo 1 (Todos os itens)", "Modelo 2 (Sem itens 7, 11, 14)", "Modelo 3 (Sem itens 7, 11, 14, 10)"),
+  CFI_Robusto = c(fit_m1["cfi.robust"], fit_m2["cfi.robust"], fit_m3["cfi.robust"]),
+  TLI_Robusto = c(fit_m1["tli.robust"], fit_m2["tli.robust"], fit_m3["tli.robust"]),
+  RMSEA_Robusto = c(fit_m1["rmsea.robust"], fit_m2["rmsea.robust"], fit_m3["rmsea.robust"]),
+  RMSEA_IC90_inferior = c(fit_m1["rmsea.ci.lower.robust"], fit_m2["rmsea.ci.lower.robust"], fit_m3["rmsea.ci.lower.robust"]),
+  RMSEA_IC90_superior = c(fit_m1["rmsea.ci.upper.robust"], fit_m2["rmsea.ci.upper.robust"], fit_m3["rmsea.ci.upper.robust"]),
+  SRMR = c(fit_m1["srmr"], fit_m2["srmr"], fit_m3["srmr"])
+)
+
+# Exibir a tabela de resultados
+print(resultados)
+
+```
+
+
+```{r}
+
+modelo_efa <- df_all_itens |> 
+  select(-a7, -a20) |> 
+  efa(nfactors = 2,
+      ordered = T,
+      rotation = "oblimin")
+
+
+summary(modelo_efa, cutoff = 0.4)
+```
+
