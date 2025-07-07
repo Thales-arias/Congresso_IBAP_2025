@@ -1,6 +1,6 @@
 Olá!
 
-Este projeto tem como objetivo divulgar os scripts, bancos de dados e descrições utilizados na elaboração de dois pôsteres apresentados no XII Congresso Brasileiro de Avaliação Psicológica (CBPA):
+Este projeto tem como objetivo divulgar as referências, os scripts e as saídas de R utilizados na confecção de dois pôsteres apresentados no XII Congresso Brasileiro de Avaliação Psicológica (CBPA):
 
 "Evidências psicométricas da Escala de Afetos em discentes de uma Universidade Federal cearense."
 "Invariância de medida da Escala de Contexto de Trabalho Docente nos níveis de Educação Básica."
@@ -14,7 +14,7 @@ English:
 
 Hello!
 
-This project aims to share the scripts, datasets, and descriptions used in the preparation of two posters presented at the 12th Brazilian Congress of Psychological Assessment (CBPA):
+This project aims to share the references, R scripts and outputs used in the preparation of two posters presented at the 12th Brazilian Congress of Psychological Assessment (CBPA):
 
 "Psychometric evidence of the Affect Scale in students from a Federal University in Ceará."
 "Measurement invariance of the Teaching Work Context Scale in Basic Education levels."
