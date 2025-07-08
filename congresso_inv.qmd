@@ -17,39 +17,103 @@ library(semTools)
 
 ```
 
-# Ler o arquivo e deletar categoria "outros"
+# Lendo os bancos e retirando casos que se adequem aos critérios de exclusão
 
 ```{r}
 
-df <- read_csv("C:/projetos-r/Congresso_IBAP_2025/data/eactd_inv.csv")
+df <- read_csv("data/eactd_inv.csv") |>
+  filter(tcle == "Sim", 
+         prof_educacao_basica == "Sim",
+         atuou_meses == "Sim")
+
+codebook <- read_csv("data/code_book_final_escala_contexto_de_trabalho_docente.csv")
+
+```
+
+# Deletando categoria "outros" na variável "nivel de ensino" devido ao baixo n (80)
+
+```{r}
 
 df <- df |> 
   filter(nens_recode != "outros")
 
 ```
 
-# Itens para cada fator: F1 - rel; F2 - cond; F3 - org
+# Observando dados demográficos da amostra; m1 = Mais de um nível de ensino lecionado, f1 = Fundamental I, f2 = Fundamental II, ei = Ensino Infatil, em = Ensino Médio
+
+```{r}
+
+df |> 
+  count(sexo, sort = T) |> 
+  mutate(perc = round(n/sum(n)*100,2))
+
+df |> 
+  count(corraca, sort = T) |> 
+  mutate(perc = round(n/sum(n)*100,2))
+
+df |> 
+  summarise(
+    minimo_idade = min(idade, na.rm = T),
+    maximo_idade = max(idade, na.rm = T),
+    media_idade = mean(idade, na.rm = T),
+    dp_idade = sd(idade, na.rm = T)
+  )
+
+df |> 
+  count(nens_recode, sort = T) |> 
+  mutate(perc = round(n/sum(n)*100,2))
+
+```
+
+# Guia para separar por fatores
+
+```{r}
+
+codebook |> 
+  filter(Fator == "Relações socioprofissionais") |> 
+  print()
+
+codebook |> 
+  filter(Fator == "Condições de trabalho") |> 
+  print()
+
+codebook |> 
+  filter(Fator == "Organização do trabalho") |> 
+  print()
+
+```
+
+# Sinalizando os Itens para cada fator: F1 - relações socioprofissionais; F2 - condições de trabalho; F3 - organização do trabalho
 
 ```{r}
 
 modelo_eactd <- '
-  F1 =~ eactd10 + eactd44 + eactd2 + eactd37 + eactd45 + 
-         eactd23 + eactd34 + eactd32 + eactd1 + eactd20
-  F2 =~ eactd29 + eactd41 + eactd54 + eactd14 + 
-         eactd55 + eactd30 + eactd36 + eactd12 + eactd38 + 
-         eactd35 + eactd50 + eactd51
-  F3 =~ eactd25 + eactd39 + eactd42 + eactd56 + 
-         eactd58 + eactd48 + eactd57 + eactd28 + eactd33
+  F1 =~ eactd1 + eactd2 + eactd10 + eactd20 + eactd23 + 
+         eactd32 + eactd34 + eactd37 + eactd44 + eactd45
+         
+  F2 =~ eactd12 + eactd14 + eactd29 + eactd30 + eactd35 +
+         eactd36 + eactd38 + eactd41 + eactd50 + eactd51 + 
+         eactd54 + eactd55
+         
+  F3 =~ eactd25 + eactd28 + eactd33 + eactd39 + eactd42 + 
+         eactd48 + eactd56 + eactd57 + eactd58
 '
 
 ```
 
-# Banco só com os itens da EACTD
+# Criando objeto somente com os itens da EACTD
 
 ```{r}
 
-eactd_ok <- df |> 
-  select(starts_with("eactd"))
+itens_eactd <- c(
+  "eactd1", "eactd2", "eactd10", "eactd20", "eactd23", 
+  "eactd32", "eactd34", "eactd37", "eactd44", "eactd45",
+  "eactd12", "eactd14", "eactd29", "eactd30", "eactd35",
+  "eactd36", "eactd38", "eactd41", "eactd50", "eactd51",
+  "eactd54", "eactd55", "eactd25", "eactd28", "eactd33",
+  "eactd39", "eactd42", "eactd48", "eactd56", "eactd57",
+  "eactd58"
+)
 
 ```
 
@@ -61,13 +125,13 @@ all.results <- matrix(NA, ncol = 8, nrow = 4)
 
 ```
 
-# Proposição 01 (Wu & Estabrook, 2016) – somente estrutura fatorial - invariância configural
+# Proposição 01 (Wu & Estabrook, 2016) – somente estrutura fatorial - invariância configural - Código adaptado de Svetina, Rutkowski e Rutkowski (2019).
 
 ```{r}
 
 baseline <- measEq.syntax(configural.model = modelo_eactd,
                           data = df,
-                          ordered = colnames(eactd_ok),
+                          ordered = itens_eactd,
                           parameterization = "delta",
                           ID.fac = "std.lv",
                           ID.cat = "Wu.Estabrook.2016",
@@ -78,7 +142,7 @@ model.baseline <- as.character(baseline)
 
 fit.baseline <- cfa(model.baseline, data = df, 
                     group = "nens_recode", 
-                    ordered = colnames(eactd_ok))
+                    ordered = itens_eactd)
 
 all.results[1, 1:6] <- round(data.matrix(fitmeasures(
   fit.baseline, fit.measures = c(
@@ -90,13 +154,13 @@ all.results[1, 1:6] <- round(data.matrix(fitmeasures(
 
 ```
 
-# Proposição 04 – fatores e thresholds
+# Proposição 04 (Wu & Estabrook, 2016) – fatores e limiares - Código adaptado de Svetina, Rutkowski e Rutkowski (2019).
 
 ```{r}
 
 prop4 <- measEq.syntax(configural.model = modelo_eactd,
                        data = df,
-                       ordered = colnames(eactd_ok),
+                       ordered = itens_eactd,
                        parameterization = "delta",
                        ID.fac = "std.lv",
                        ID.cat = "Wu.Estabrook.2016",
@@ -107,7 +171,7 @@ model.prop4 <- as.character(prop4)
 
 fit.prop4 <- cfa(model.prop4, data = df, 
                  group = "nens_recode", 
-                 ordered = colnames(eactd_ok))
+                 ordered = itens_eactd)
 
 all.results[2, 1:6] <- round(data.matrix(fitmeasures(
   fit.prop4, fit.measures = c(
@@ -118,13 +182,13 @@ all.results[2, 1:6] <- round(data.matrix(fitmeasures(
 
 ```
 
-# Proposição 07 – fatores, thresholds e cargas
+# Proposição 07 (Wu & Estabrook, 2016) – fatores, limiares e cargas - Invariância Métrica - Código adaptado de Svetina, Rutkowski e Rutkowski (2019).
 
 ```{r}
 
 prop7 <- measEq.syntax(configural.model = modelo_eactd,
                        data = df,
-                       ordered = colnames(eactd_ok),
+                       ordered = itens_eactd,
                        parameterization = "delta",
                        ID.fac = "std.lv",
                        ID.cat = "Wu.Estabrook.2016",
@@ -135,7 +199,7 @@ model.prop7 <- as.character(prop7)
 
 fit.prop7 <- cfa(model.prop7, data = df, 
                  group = "nens_recode", 
-                 ordered = colnames(eactd_ok)) 
+                 ordered = itens_eactd) 
 
 all.results[3, 1:6] <- round(data.matrix(fitmeasures(
   fit.prop7, fit.measures = c(
@@ -146,13 +210,13 @@ all.results[3, 1:6] <- round(data.matrix(fitmeasures(
 
 ```
 
-# Proposição 11 – fatores, thresholds, cargas e interceptos
+# Proposição 11 (Wu & Estabrook, 2016) – fatores, thresholds, cargas e interceptos - Invariância escalar - Código adaptado de Svetina, Rutkowski e Rutkowski (2019).
 
 ```{r}
 
 prop11 <- measEq.syntax(configural.model = modelo_eactd,
                         data = df,
-                        ordered = colnames(eactd_ok),
+                        ordered = itens_eactd,
                         parameterization = "delta",
                         ID.fac = "std.lv",
                         ID.cat = "Wu.Estabrook.2016",
@@ -164,7 +228,7 @@ model.prop11 <- as.character(prop11)
 
 fit.prop11 <- cfa(model.prop11, data = df, 
                   group = "nens_recode", 
-                  ordered = colnames(eactd_ok)) 
+                  ordered = itens_eactd) 
 
 all.results[4, 1:6] <- round(data.matrix(fitmeasures(
   fit.prop11, fit.measures = c(
@@ -186,7 +250,7 @@ for (i in 2:4) {
 
 ```
 
-# Nomes das colunas e linhas
+# Nomeando as colunas e linhas
 
 ```{r}
 
@@ -204,13 +268,5 @@ rownames(all.results) <- c("baseline", "prop4", "prop7", "prop11")
 ```{r}
 
 print(all.results)
-
-```
-
-# Comparativo dos modelos
-
-```{r}
-
-lavTestLRT(fit.baseline, fit.prop4, fit.prop7, fit.prop11)
 
 ```

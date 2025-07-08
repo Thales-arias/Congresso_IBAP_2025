@@ -1,0 +1,66 @@
+# Observando dados demográficos da amostra
+
+  sexo          n  perc
+  <chr>     <int> <dbl>
+1 Feminino    175  54.7
+2 Masculino   145  45.3
+
+  minimo_idade maximo_idade media_idade dp_idade
+         <dbl>        <dbl>       <dbl>    <dbl>
+1           18           58        21.7     4.80
+
+  formacao_academica                     n  perc
+  <chr>                              <int> <dbl>
+1 Ciências sociais, artes e educação   208 65   
+2 Ciências exatas e biológicas          83 25.9 
+3 Saúde                                 29  9.06
+
+  cor_raca     n  perc
+  <chr>    <int> <dbl>
+1 Parda      157 49.1 
+2 Branca     123 38.4 
+3 Preta       32 10   
+4 Amarela      6  1.88
+5 Indígena     2  0.62
+
+# Guia para separar por fatores
+
+   Variável Item                                                             Fator         
+   <chr>    <chr>                                                            <chr>         
+ 1 a2       Me sinto confiante no dia a dia.                                 Afeto positivo
+ 2 a3       Sou corajoso.                                                    Afeto positivo
+ 3 a6       Sou determinado para conseguir o que eu quero.                   Afeto positivo
+ 4 a8       Sou apaixonado por algumas coisas que eu faço.                   Afeto positivo
+ 5 a9       Muitas situações me deixaram alegre nos últimos tempos.          Afeto positivo
+ 6 a13      Em geral eu me sinto forte para superar as dificuldades da vida. Afeto positivo
+ 7 a14      Me dá prazer experimentar coisas novas.                          Afeto positivo
+ 8 a15      Sinto orgulho de mim mesmo.                                      Afeto positivo
+ 9 a17      Sou valente quando estou diante de um desafio.                   Afeto positivo
+10 a18      Sou uma pessoa feliz.                                            Afeto positivo
+
+   Variável Item                                                                         Fator         
+   <chr>    <chr>                                                                        <chr>         
+ 1 a1       Muitas vezes, eu fico nervoso.                                               Afeto negativo
+ 2 a4       Tenho me sentido cansado nos últimos meses.                                  Afeto negativo
+ 3 a5       Ando muito preocupado nos últimos tempos.                                    Afeto negativo
+ 4 a7       Me sinto culpado por coisas que eu fiz no passado.                           Afeto negativo
+ 5 a10      Fico zangado quando sou contrariado.                                         Afeto negativo
+ 6 a11      As pessoas dizem que sou mal-humorado.                                       Afeto negativo
+ 7 a12      Ultimamente ocorreram situações em que senti muita raiva de algumas pessoas. Afeto negativo
+ 8 a16      Eu me irrito facilmente.                                                     Afeto negativo
+ 9 a19      Nos últimos tempos ocorreram situações em que me senti humilhado.            Afeto negativo
+10 a20      Tenho me sentido triste ultimamente.                                         Afeto negativo
+
+# Exibindo a tabela de resultados comparando os modelos
+
+                              Modelo CFI_Robusto TLI_Robusto RMSEA_Robusto RMSEA_IC90_inferior RMSEA_IC90_superior       SRMR
+1          Modelo 1 (Todos os itens)   0.9040752   0.8921555    0.09364006          0.08576589          0.10163561 0.09442945
+2     Modelo 2 (Sem itens 7, 11, 14)   0.9343452   0.9243301    0.08837672          0.07975496          0.09716031 0.08773819
+3 Modelo 3 (Sem itens 7, 11, 14, 10)   0.9507687   0.9426431    0.08147146          0.07265178          0.09046507 0.08165979
+
+# Exibindo alpha e ômega do modelo 2
+
+             Grupo     Alpha Omega_Total
+1 Afetos Negativos 0.8257984   0.8272588
+2 Afetos Positivos 0.8807889   0.8816990
+3  Escala Completa 0.8792600   0.9035810

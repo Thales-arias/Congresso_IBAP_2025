@@ -3,7 +3,9 @@ title: "Congresso_afetos"
 editor_options:
   chunk_output_type: console
 ---
+
 # Rodando os pacotes necessários
+
 ```{r}
 
 #| echo: false
@@ -12,19 +14,48 @@ editor_options:
 library(tidyverse)
 library(readxl)
 library(lavaan)
+library(psych)
 
 ```
 
-# Pegando o banco
+# Lendo os bancos
+
 ```{r}
 
-df <- read_csv("data/empatia_congresso.csv")
+df <- read_csv("data/afetos_afc.csv")
 
 codebook <- read_csv("data/code_book_escala_afetos_positivos_negativos.csv")
 
 ```
 
+# Observando os dados demográficos da amostra
+
+```{r}
+
+df |> 
+  count(sexo, sort = T) |> 
+  mutate(perc = round(n/sum(n)*100,2))
+
+df |> 
+  summarise(
+    minimo_idade = min(idade),
+    maximo_idade = max(idade),
+    media_idade = mean(idade, na.rm = T),
+    dp_idade = sd(idade, na.rm = T)
+  )
+
+df |> 
+  count(formacao_academica, sort = T) |> 
+  mutate(perc = round(n/sum(n)*100,2))
+
+df |> 
+  count(cor_raca, sort = T) |> 
+  mutate(perc = round(n/sum(n)*100,2))
+
+```
+
 # Selecionando somente as variaveis de interesse
+
 ```{r}
 
 df_all_itens <- df |> 
@@ -34,6 +65,7 @@ df_all_itens <- df |>
 ```
 
 # Guia para separar por fatores
+
 ```{r}
 
 codebook |> 
@@ -47,7 +79,8 @@ codebook |>
 
 ```
 
-# f1 = Afetos Negativos, f2 = Afetos Positivos
+# Criando modelo com todos os itens; f1 = Afetos Negativos, f2 = Afetos Positivos
+
 ```{r}
 
 modelo1 <- "f1 =~  a1 + a4 + a5 + a7 + a10 + a11 + 
@@ -58,17 +91,19 @@ modelo1 <- "f1 =~  a1 + a4 + a5 + a7 + a10 + a11 +
 
 ```
 
-# CFA
+# Criando modelo da AFC 1
+
 ```{r}
 
 modelo_cfa_1 <- cfa(model = modelo1,
                   data = df_all_itens,
-                  ordered = names("a"),
+                  ordered = T,
                   estimator = "wlsmv")
 
 ```
 
-# sumário do modelo
+# Sumário do modelo AFC 1
+
 ```{r}
  
 m1 <- summary(modelo_cfa_1,
@@ -76,9 +111,12 @@ m1 <- summary(modelo_cfa_1,
         rsquare = T,
         standardized= T)
 
+m1
+
 ```
 
-# retirada dos itens 7, 11 e 14
+# Retirando itens 7, 11 e 14
+
 ```{r}
 
 modelo2 <- "f1 =~  a1 + a4 + a5 + a10 + 
@@ -89,7 +127,8 @@ modelo2 <- "f1 =~  a1 + a4 + a5 + a10 +
 
 ```
 
-# CFA
+# Criando modelo da AFC 2
+
 ```{r}
 
 modelo_cfa_2 <- cfa(model = modelo2,
@@ -99,7 +138,8 @@ modelo_cfa_2 <- cfa(model = modelo2,
 
 ```
 
-# sumário do modelo
+# Sumário do modelo AFC 2
+
 ```{r}
  
 m2 <- summary(modelo_cfa_2,
@@ -107,9 +147,12 @@ m2 <- summary(modelo_cfa_2,
         rsquare = T,
         standardized= T)
 
+m2
+
 ```
 
-# retirada do item 10
+# Retirando item 10
+
 ```{r}
 
 modelo3 <- "f1 =~  a1 + a4 + a5 + 
@@ -120,7 +163,8 @@ modelo3 <- "f1 =~  a1 + a4 + a5 +
 
 ```
 
-# CFA
+# Criando modelo da AFC 3
+
 ```{r}
 
 modelo_cfa_3 <- cfa(model = modelo3,
@@ -130,7 +174,8 @@ modelo_cfa_3 <- cfa(model = modelo3,
 
 ```
 
-# sumário do modelo
+# Sumário do modelo AFC 3
+
 ```{r}
  
 m3 <- summary(modelo_cfa_3,
@@ -138,41 +183,104 @@ m3 <- summary(modelo_cfa_3,
         rsquare = T,
         standardized= T)
 
+m3
+
 ```
 
-# comparar modelos
-```{r}
-# Extrair indicadores de ajuste robustos para cada modelo
-fit_m1 <- fitMeasures(modelo_cfa_1, fit.measures = c("cfi.robust", "tli.robust", "rmsea.robust", "rmsea.ci.lower.robust", "rmsea.ci.upper.robust", "srmr"))
-fit_m2 <- fitMeasures(modelo_cfa_2, fit.measures = c("cfi.robust", "tli.robust", "rmsea.robust", "rmsea.ci.lower.robust", "rmsea.ci.upper.robust", "srmr"))
-fit_m3 <- fitMeasures(modelo_cfa_3, fit.measures = c("cfi.robust", "tli.robust", "rmsea.robust", "rmsea.ci.lower.robust", "rmsea.ci.upper.robust", "srmr"))
+# Comparando os três modelos
 
-# Organizar os resultados em uma tabela
+```{r}
+
+fit_m1 <- fitMeasures(modelo_cfa_1, fit.measures =
+                        c("cfi.robust", "tli.robust",
+                          "rmsea.robust",
+                          "rmsea.ci.lower.robust",
+                          "rmsea.ci.upper.robust", "srmr"))
+fit_m2 <- fitMeasures(modelo_cfa_2, fit.measures =
+                        c("cfi.robust", "tli.robust",
+                          "rmsea.robust",
+                          "rmsea.ci.lower.robust",
+                          "rmsea.ci.upper.robust", "srmr"))
+fit_m3 <- fitMeasures(modelo_cfa_3, fit.measures =
+                        c("cfi.robust", "tli.robust", 
+                          "rmsea.robust",
+                          "rmsea.ci.lower.robust",
+                          "rmsea.ci.upper.robust", "srmr"))
+
 resultados <- data.frame(
-  Modelo = c("Modelo 1 (Todos os itens)", "Modelo 2 (Sem itens 7, 11, 14)", "Modelo 3 (Sem itens 7, 11, 14, 10)"),
-  CFI_Robusto = c(fit_m1["cfi.robust"], fit_m2["cfi.robust"], fit_m3["cfi.robust"]),
-  TLI_Robusto = c(fit_m1["tli.robust"], fit_m2["tli.robust"], fit_m3["tli.robust"]),
-  RMSEA_Robusto = c(fit_m1["rmsea.robust"], fit_m2["rmsea.robust"], fit_m3["rmsea.robust"]),
-  RMSEA_IC90_inferior = c(fit_m1["rmsea.ci.lower.robust"], fit_m2["rmsea.ci.lower.robust"], fit_m3["rmsea.ci.lower.robust"]),
-  RMSEA_IC90_superior = c(fit_m1["rmsea.ci.upper.robust"], fit_m2["rmsea.ci.upper.robust"], fit_m3["rmsea.ci.upper.robust"]),
+  Modelo = c("Modelo 1 (Todos os itens)", 
+             "Modelo 2 (Sem itens 7, 11, 14)", 
+             "Modelo 3 (Sem itens 7, 11, 14, 10)"),
+  CFI_Robusto = c(fit_m1["cfi.robust"], 
+                  fit_m2["cfi.robust"], 
+                  fit_m3["cfi.robust"]),
+  TLI_Robusto = c(fit_m1["tli.robust"], 
+                  fit_m2["tli.robust"],
+                  fit_m3["tli.robust"]),
+  RMSEA_Robusto = c(fit_m1["rmsea.robust"],
+                    fit_m2["rmsea.robust"],
+                    fit_m3["rmsea.robust"]),
+  RMSEA_IC90_inferior = c(fit_m1["rmsea.ci.lower.robust"],
+                          fit_m2["rmsea.ci.lower.robust"],
+                          fit_m3["rmsea.ci.lower.robust"]),
+  RMSEA_IC90_superior = c(fit_m1["rmsea.ci.upper.robust"],
+                          fit_m2["rmsea.ci.upper.robust"],
+                          fit_m3["rmsea.ci.upper.robust"]),
   SRMR = c(fit_m1["srmr"], fit_m2["srmr"], fit_m3["srmr"])
 )
 
-# Exibir a tabela de resultados
+```
+
+# Exibindo a tabela de resultados comparando os modelos
+
+```{r}
+
 print(resultados)
 
 ```
 
+# Calculando alpha e ômega da escala como um todo e de cada fator do modelo 2
 
 ```{r}
 
-modelo_efa <- df_all_itens |> 
-  select(-a7, -a20) |> 
-  efa(nfactors = 2,
-      ordered = T,
-      rotation = "oblimin")
+# Afetos negativos
+omega_neg <- df |>
+  select(a1, a4, a5, a10, a12, a16, a19, a20) |>
+  omega(fm = "pa", nfactors = 1, poly = T)
 
+# Afetos positivos
+omega_pos <- df |>
+  select(a2, a3, a6, a8, a9, a13, a15, a17, a18) |>
+  omega(fm = "pa", nfactors = 1, poly = T)
 
-summary(modelo_efa, cutoff = 0.4)
+# Toda escala
+omega_total <- df |>
+  select(a1, a2, a3, a4, a5, a6, a8, a9, a10, a12,
+         a13, a15, a16, a17, a18, a19, a20) |>
+  omega(fm = "pa", nfactors = 2, poly = T)
+
 ```
 
+# Sistematizando as informações
+
+```{r}
+
+resumo_alpha_omega <- data.frame(
+  Grupo = c("Afetos Negativos", 
+            "Afetos Positivos", 
+            "Escala Completa"),
+  Alpha = c(omega_neg$alpha, omega_pos$alpha,
+            omega_total$alpha),
+  Omega_Total = c(omega_neg$omega.tot, omega_pos$omega.tot,
+                  omega_total$omega.tot)
+  )
+
+```
+
+# Exibindo alpha e ômega do modelo 2
+
+```{r}
+
+print(resumo_alpha_omega)
+
+```

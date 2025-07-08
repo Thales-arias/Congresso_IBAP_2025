@@ -1,0 +1,76 @@
+# Observando dados demográficos da amostra; m1 = Mais de um nível de ensino lecionado, f1 = Fundamental I, f2 = Fundamental II, ei = Ensino Infatil, em = Ensino Médio
+
+  sexo          n  perc
+  <chr>     <int> <dbl>
+1 Feminino   1258  72.2
+2 Masculino   485  27.8
+
+  corraca      n  perc
+  <chr>    <int> <dbl>
+1 Pardo      947 54.3 
+2 Branco     562 32.2 
+3 Preto      190 10.9 
+4 Amarelo     32  1.84
+5 Indígena    12  0.69
+
+  minimo_idade maximo_idade media_idade dp_idade
+         <dbl>        <dbl>       <dbl>    <dbl>
+1           19           72        42.7     9.34
+
+  nens_recode     n  perc
+  <chr>       <int> <dbl>
+1 m1            557  32.0
+2 f1            383  22.0
+3 f2            350  20.1
+4 ei            275  15.8
+5 em            178  10.2
+
+# Guia para separar por fatores
+
+   Variável Item                                                                            Fator                      
+   <chr>    <chr>                                                                           <chr>                      
+ 1 eactd1   Sinto-me acolhido(a) pelos outros professores da escola.                        Relações socioprofissionais
+ 2 eactd2   Os professores participam das decisões sobre a escola.                          Relações socioprofissionais
+ 3 eactd10  Os professores têm autonomia para decidir sobre os conteúdos das aulas.         Relações socioprofissionais
+ 4 eactd20  Sinto que posso contar com a ajuda dos outros professores.                      Relações socioprofissionais
+ 5 eactd23  A comunicação entre os professores é satisfatória.                              Relações socioprofissionais
+ 6 eactd32  Os professores gostam de aprender com os colegas de trabalho da escola.         Relações socioprofissionais
+ 7 eactd34  Sinto que tenho muitos amigos entre os meus colegas de trabalho da escola.      Relações socioprofissionais
+ 8 eactd37  Os professores discutem métodos e estratégias de ensino uns com os outros.      Relações socioprofissionais
+ 9 eactd44  Há liberdade para utilizar diferentes metodologias de ensino.                   Relações socioprofissionais
+10 eactd45  Meus colegas se interessam pelos meus pontos de vista e opiniões profissionais. Relações socioprofissionais
+
+   Variável Item                                                                                       Fator                
+   <chr>    <chr>                                                                                      <chr>                
+ 1 eactd12  O fornecimento de equipamentos e recursos é suficiente.                                    Condições de trabalho
+ 2 eactd14  As salas de aula são pequenas para a quantidade de alunos.                                 Condições de trabalho
+ 3 eactd29  Os professores podem imprimir e xerocar materiais didáticos na escola.                     Condições de trabalho
+ 4 eactd30  Os professores têm acesso à internet de qualidade na escola.                               Condições de trabalho
+ 5 eactd35  A sala de aula é desconfortável (mesa, cadeira, iluminação, climatização, ventilação etc). Condições de trabalho
+ 6 eactd36  A biblioteca escolar tem um acervo adequado de livros e outros materiais bibliográficos.   Condições de trabalho
+ 7 eactd38  Os banheiros utilizados pelos professores são precários.                                   Condições de trabalho
+ 8 eactd41  As formações dadas aos professores são satisfatórias.                                      Condições de trabalho
+ 9 eactd50  A sala dos professores é confortável.                                                      Condições de trabalho
+10 eactd51  A sala de aula é adequada para realizar atividades em grupo.                               Condições de trabalho
+11 eactd54  O nível de ruído dentro da sala de aula atrapalha o trabalho do professor.                 Condições de trabalho
+12 eactd55  A escola tem um local para guardar meus objetos pessoais com segurança.                    Condições de trabalho
+
+  Variável Item                                                                                                   Fator                  
+  <chr>    <chr>                                                                                                  <chr>                  
+1 eactd25  Existe uma cobrança excessiva por parte da gestão escolar pelos resultados educacionais dos alunos.    Organização do trabalho
+2 eactd28  O ritmo de trabalho é excessivo.                                                                       Organização do trabalho
+3 eactd33  O horário de descanso e/ou finais de semana são usados para trabalho.                                  Organização do trabalho
+4 eactd39  Meu horário de almoço é curto.                                                                         Organização do trabalho
+5 eactd42  Os prazos para a realização das tarefas demandadas pela coordenação ou direção escolar são curtos.     Organização do trabalho
+6 eactd48  Os professores têm uma carga de trabalho elevada.                                                      Organização do trabalho
+7 eactd56  Falta tempo para realizar pausas de descanso no trabalho.                                              Organização do trabalho
+8 eactd57  Eu tenho que fazer horas extras na escola.                                                             Organização do trabalho
+9 eactd58  Preciso responder e-mails, ligações ou mensagens de trabalho que chegam fora do horário de expediente. Organização do trabalho
+
+# Exibindo os resultados
+
+         chisq.scaled df.scaled pvalue.scaled rmsea.scaled cfi.scaled tli.scaled delta.cfi delta.rmsea
+baseline     5579.256      2155             0        0.068      0.921      0.915        NA          NA
+prop4        5912.627      2403             0        0.065      0.919      0.922    -0.002      -0.003
+prop7        5749.990      2515             0        0.061      0.926      0.931     0.007      -0.004
+prop11       5905.974      2627             0        0.060      0.925      0.933    -0.001      -0.001
