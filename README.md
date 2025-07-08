@@ -16,9 +16,9 @@ Hello!
 
 This project aims to share the references, R scripts, and outputs used in the preparation of two posters presented at the 12th Brazilian Congress of Psychological Assessment (CBPA):
 
-Psychometric evidence of the Affect Scale among students at a Federal University in Ceará.
+"Psychometric evidence of the Affect Scale among students at a Federal University in Ceará."
 
-Measurement invariance of the Teaching Work Context Scale across Basic Education levels.
+"Measurement invariance of the Teaching Work Context Scale across Basic Education levels."
 
 All materials available here are intended to promote open, replicable, and auditable science.
 
