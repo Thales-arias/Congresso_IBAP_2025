@@ -1,12 +1,12 @@
 Olá!
 
-Este projeto tem como objetivo divulgar as referências, os scripts e as saídas geradas no R utilizados na confecção de dois pôsteres apresentados no XII Congresso Brasileiro de Avaliação Psicológica (CBPA):
+Este projeto tem como objetivo divulgar as referências, os scripts e as saídas geradas no R utilizadas na confecção de dois pôsteres apresentados no XII Congresso Brasileiro de Avaliação Psicológica (CBPA):
 
 "Evidências psicométricas da Escala de Afetos em discentes de uma Universidade Federal cearense."
 
 "Invariância de medida da Escala de Contexto de Trabalho Docente nos níveis de Educação Básica."
 
-Todo o material aqui disponibilizado busca contribuir com a ciência aberta, replicável e auditável!
+Todo o material disponibilizado aqui busca contribuir com uma ciência aberta, replicável e auditável!
 
 Fique à vontade para explorar os arquivos!
 
@@ -20,7 +20,7 @@ This project aims to share the references, R scripts, and outputs generated in R
 
 "Measurement invariance of the Teaching Work Context Scale across Basic Education levels."
 
-All materials available here are meant to contribute to open, replicable, and auditable science!
+All materials available here are meant to contribute to a open, replicable, and auditable science!
 
 Feel free to explore the files!
 
